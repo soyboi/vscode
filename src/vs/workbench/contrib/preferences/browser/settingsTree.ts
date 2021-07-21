@@ -513,6 +513,7 @@ interface ISettingObjectItemTemplate extends ISettingItemTemplate<Record<string,
 	objectDropdownWidget?: ObjectSettingDropdownWidget,
 	objectCheckboxWidget?: ObjectSettingCheckboxWidget;
 	validationErrorMessageElement: HTMLElement;
+	renderValidations?: (value: Record<string, unknown> | undefined) => void;
 }
 
 interface ISettingNewExtensionsTemplate extends IDisposableTemplate {
@@ -1220,8 +1221,8 @@ abstract class AbstractSettingObjectRenderer extends AbstractSettingRenderer imp
 				template.objectDropdownWidget!.setValue(newItems);
 			}
 
-			if (template.onChange) {
-				template.onChange(newObject);
+			if (template.renderValidations) {
+				template.renderValidations(newObject);
 			}
 		}
 	}
@@ -1257,7 +1258,7 @@ export class SettingObjectRenderer extends AbstractSettingObjectRenderer impleme
 		});
 
 		template.context = dataElement;
-		template.onChange = (v: Record<string, unknown> | undefined) => {
+		template.renderValidations = (v: Record<string, unknown> | undefined) => {
 			renderArrayValidations(dataElement, template, v, false);
 		};
 		renderArrayValidations(dataElement, template, dataElement.value, true);
